@@ -73,7 +73,7 @@ begin
 end;
 ````
 
-Note that the reason the `PostMessage` and `SendMessage` are on the channel.Queue property is purely to work around the generics limitations in delphi, where none generic interfaces cannot have generic methods (records can, so Queue is actually a record). 
+Note that the reason the `PostMessage` and `SendMessage` are on the channel.Queue property is purely to work around the generics limitations in delphi, where non-generic interfaces cannot have generic methods (records can, so Queue is actually a record).
 
 `Queue.PostMessage` sends the message Asynchronously, ie the method returns before the message has been received.
 
