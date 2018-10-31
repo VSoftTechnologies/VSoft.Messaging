@@ -1,0 +1,81 @@
+object Form2: TForm2
+  Left = 0
+  Top = 0
+  Caption = 'Form2'
+  ClientHeight = 432
+  ClientWidth = 923
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  inline rx1: TFrame1
+    Position.X = 8.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 433.000000000000000000
+    Size.Height = 297.000000000000000000
+    Size.PlatformDefault = False
+    inherited LogMemo: TMemo
+      Viewport.Width = 381.000000000000000000
+      Viewport.Height = 229.000000000000000000
+    end
+  end
+  inline rx2: TFrame1
+    Position.X = 472.000000000000000000
+    Position.Y = 16.000000000000000000
+    Size.Width = 431.000000000000000000
+    Size.Height = 297.000000000000000000
+    Size.PlatformDefault = False
+    inherited LogMemo: TMemo
+      Viewport.Width = 381.000000000000000000
+      Viewport.Height = 229.000000000000000000
+    end
+  end
+  object helloButton: TButton
+    Position.X = 40.000000000000000000
+    Position.Y = 328.000000000000000000
+    Size.Width = 137.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Text = 'Say Hello'
+    OnClick = helloButtonClick
+  end
+  object goodbyeButton: TButton
+    Position.X = 216.000000000000000000
+    Position.Y = 328.000000000000000000
+    Size.Width = 137.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    Text = 'Say Goodbye'
+    OnClick = goodbyeButtonClick
+  end
+  object thdSendButton: TButton
+    Position.X = 40.000000000000000000
+    Position.Y = 368.000000000000000000
+    Size.Width = 209.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    Text = 'PostMessage from Thread'
+    OnClick = thdSendButtonClick
+  end
+  object Button1: TButton
+    Position.X = 416.000000000000000000
+    Position.Y = 328.000000000000000000
+    Size.Width = 177.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    Text = 'Sync Say Hello'
+    OnClick = Button1Click
+  end
+  object chkAsync: TCheckBox
+    IsChecked = True
+    Position.X = 272.000000000000000000
+    Position.Y = 371.000000000000000000
+    TabOrder = 6
+    Text = 'Async'
+  end
+end
