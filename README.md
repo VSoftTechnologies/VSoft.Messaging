@@ -79,8 +79,7 @@ Note that the reason the `PostMessage` and `SendMessage` are on the channel.Queu
 
 `Queue.SendMessage` returns after all dispatchers have finished dispatching the message. Note `SendMessage` should not be used to send messages to dispatchers that operate on the user interface, use `PostMessage` instead.  
 
-
-### Recieving Messages
+### Receiving Messages
 
 For an object to receive the messages, it needs to create a Dispatcher, and hook the dispatcher to itself and the channel
 
@@ -95,7 +94,7 @@ type
 
 implementation
 
-constructor TReciever.Create(const channel : IMessageChannel);
+constructor TReceiver.Create(const channel : IMessageChannel);
 begin
   FDispatcher := TMessageDispatcherFactory.CreateDispatcher;
 
