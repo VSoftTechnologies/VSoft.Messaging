@@ -2,17 +2,15 @@ object Frame1: TFrame1
   Size.Width = 431.000000000000000000
   Size.Height = 292.000000000000000000
   Size.PlatformDefault = False
+  TabOrder = 0
   object LogMemo: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
-    DataDetectorTypes = []
     Position.X = 32.000000000000000000
     Position.Y = 24.000000000000000000
     Size.Width = 385.000000000000000000
     Size.Height = 233.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 0
-    Viewport.Width = 381.000000000000000000
-    Viewport.Height = 229.000000000000000000
   end
   object ProgressBar1: TProgressBar
     Orientation = Horizontal

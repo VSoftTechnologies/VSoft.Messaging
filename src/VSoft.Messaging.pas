@@ -87,10 +87,16 @@ type
     function GetTarget : TObject;
     function GetEnabled : boolean;
     procedure SetEnabled(const value : boolean);
+    procedure SetIncludeFilter(const includeFilter : TArray<Cardinal>);
+    function GetIncludeFilter : TArray<Cardinal>;
+    procedure SetExcludeFilter(const excludeFilter : TArray<Cardinal>);
+    function GetExcludeFilter : TArray<Cardinal>;
 
     property Channel : IMessageChannel read GetChannel write SetChannel;
     property Target : TObject read GetTarget write SetTarget;
     property Enabled : boolean read GetEnabled write SetEnabled;
+    property IncludeFilter : TArray<Cardinal> read GetIncludeFilter write SetIncludeFilter;
+    property ExcludeFilter : TArray<Cardinal> read GetExcludeFilter write SetExcludeFilter;
   end;
   {$M-}
 
@@ -129,8 +135,8 @@ type
 
   TMessageDispatcherFactory = class
   public
-    class function CreateDispatcher : IMessageDispatcher;
-    class function CreateUIDispatcher : IMessageDispatcher;
+    class function CreateDispatcher(const target : TObject = nil) : IMessageDispatcher;
+    class function CreateUIDispatcher(const target : TObject = nil) : IMessageDispatcher;
   end;
 
 implementation
@@ -177,14 +183,14 @@ end;
 
 { TMessageDispatcherFactory }
 
-class function TMessageDispatcherFactory.CreateDispatcher: IMessageDispatcher;
+class function TMessageDispatcherFactory.CreateDispatcher(const target : TObject): IMessageDispatcher;
 begin
-  result := TThreadedMessageDispatcher.Create;
+  result := TThreadedMessageDispatcher.Create(target);
 end;
 
-class function TMessageDispatcherFactory.CreateUIDispatcher: IMessageDispatcher;
+class function TMessageDispatcherFactory.CreateUIDispatcher(const target : TObject = nil): IMessageDispatcher;
 begin
-  result := TUIMessageDispatcher.Create;
+  result := TUIMessageDispatcher.Create(target);
 end;
 
 end.

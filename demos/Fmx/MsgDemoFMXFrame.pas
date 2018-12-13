@@ -5,7 +5,7 @@ interface
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants, 
   FMX.Types, FMX.Graphics, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.StdCtrls,
-  FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, VSoft.Messaging, MsgDemoMessages;
+  FMX.Controls.Presentation, FMX.Memo, VSoft.Messaging, MsgDemoMessages, FMX.Layouts;
 
 type
   TFrame1 = class(TFrame)
@@ -21,6 +21,7 @@ type
   public
     { Public declarations }
     procedure Init(const channel : IMessageChannel);
+    procedure SetExcludeFilter(const filter : TArray<Cardinal>);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
   end;
@@ -68,6 +69,11 @@ end;
 procedure TFrame1.Progress(var msg: TProgressMessage);
 begin
   ProgressBar1.Value := msg.Progress;
+end;
+
+procedure TFrame1.SetExcludeFilter(const filter: TArray<Cardinal>);
+begin
+  FDispatcher.ExcludeFilter := filter;
 end;
 
 end.

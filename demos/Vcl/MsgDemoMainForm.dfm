@@ -52,7 +52,7 @@ object Form2: TForm2
   end
   object helloButton: TButton
     Left = 16
-    Top = 248
+    Top = 280
     Width = 105
     Height = 25
     Caption = 'Say Hello'
@@ -61,7 +61,7 @@ object Form2: TForm2
   end
   object goodbyeButton: TButton
     Left = 191
-    Top = 248
+    Top = 280
     Width = 106
     Height = 25
     Caption = 'Say GoodBye'
@@ -70,7 +70,7 @@ object Form2: TForm2
   end
   object thrdSendButton: TButton
     Left = 16
-    Top = 288
+    Top = 320
     Width = 156
     Height = 25
     Caption = 'PostMessage from Thread'
@@ -79,7 +79,7 @@ object Form2: TForm2
   end
   object sayHelloSyncButton: TButton
     Left = 328
-    Top = 248
+    Top = 280
     Width = 137
     Height = 25
     Caption = 'Say Hello Sync'
@@ -88,12 +88,21 @@ object Form2: TForm2
   end
   object chkAsync: TCheckBox
     Left = 191
-    Top = 292
+    Top = 324
     Width = 97
     Height = 17
     Caption = 'Async'
     Checked = True
     State = cbChecked
     TabOrder = 6
+  end
+  object chkExclude: TCheckBox
+    Left = 191
+    Top = 239
+    Width = 129
+    Height = 17
+    Caption = 'Exclude Goodbye'
+    TabOrder = 7
+    OnClick = chkExcludeClick
   end
 end

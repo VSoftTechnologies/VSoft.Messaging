@@ -51,19 +51,30 @@ type
     FChannel    : IWeakReference<IMessageChannel>;
     FQueueLock  : TCriticalSection;
     FEnabled    : boolean;
+    FIncludeFilter : TDictionary<Cardinal,byte>;
+    FExcludeFilter : TDictionary<Cardinal,byte>;
   protected
     procedure SetChannel(const value: IMessageChannel);
     function GetChannel: IMessageChannel;
     procedure SetTarget(const value : TObject);
     function GetTarget : TObject;
+    procedure SetIncludeFilter(const includeFilter : TArray<Cardinal>);
+    function GetIncludeFilter : TArray<Cardinal>;
+    procedure SetExcludeFilter(const excludeFilter : TArray<Cardinal>);
+    function GetExcludeFilter : TArray<Cardinal>;
+
+
     function DequeueAtMost(const count : integer) : TArray<IMessage>;
 
     function GetEnabled : boolean;
     procedure SetEnabled(const value : boolean);
+
+    function WillAcceptMessage(const id : Cardinal) : boolean;
+    
     procedure PostMessage(const Message: IMessage);virtual;abstract;
     procedure SendMessage(const Message: IMessage);
   public
-    constructor Create;
+    constructor Create(const target : TObject = nil);virtual;
     destructor Destroy; override;
     property Enabled : boolean read FEnabled write FEnabled;
   end;
@@ -95,7 +106,7 @@ type
   protected
     function GetThreadClass : TMessageDispatcherThreadClass;virtual;
   public
-    constructor Create;
+    constructor Create(const target : TObject = nil);override;
     destructor Destroy;override;
     procedure PostMessage(const Message : IMessage);override;
   end;
@@ -119,9 +130,9 @@ uses
 
 { TThreadedMessageDispatcher }
 
-constructor TThreadedMessageDispatcher.Create;
+constructor TThreadedMessageDispatcher.Create(const target : TObject);
 begin
-  inherited;
+  inherited Create(target);
   FThread := GetThreadClass.Create(Self);
 end;
 
@@ -143,18 +154,19 @@ end;
 
 procedure TThreadedMessageDispatcher.PostMessage(const Message: IMessage);
 begin
-  if not FEnabled then
-    exit;
-  //Add To Queue
-  FQueueLock.Acquire;
-  try
-    FQueue.Enqueue(message);
-    TMessagingControl.IncrementGlobalQueueDepth;
-  finally
-    FQueueLock.Release;
+  if FEnabled and (FTarget <> nil) and WillAcceptMessage(message.Id) then
+  begin
+    //Add To Queue
+    FQueueLock.Acquire;
+    try
+      FQueue.Enqueue(message);
+      TMessagingControl.IncrementGlobalQueueDepth;
+    finally
+      FQueueLock.Release;
+    end;
+    //Start a processing cycle
+    FThread.Trigger;
   end;
-  //Start a processing cycle
-  FThread.Trigger;
 end;
 
 
@@ -228,11 +240,11 @@ end;
 
 { TMessageDispatcherBase }
 
-constructor TMessageDispatcherBase.Create;
+constructor TMessageDispatcherBase.Create(const target : TObject = nil);
 begin
-  inherited;
+  inherited Create;
   FQueue := TQueue<IMessage>.Create;
-  FTarget := nil;
+  FTarget := target;
   FQueueLock := TCriticalSection.Create;
   FEnabled := True;
   FChannel := nil;
@@ -286,6 +298,20 @@ begin
   result := FEnabled;
 end;
 
+function TMessageDispatcherBase.GetExcludeFilter: TArray<Cardinal>;
+begin
+  result := [];
+  if FExcludeFilter <> nil then
+    result := FExcludeFilter.Keys.ToArray;
+end;
+
+function TMessageDispatcherBase.GetIncludeFilter: TArray<Cardinal>;
+begin
+  result := [];
+  if FExcludeFilter <> nil then
+    result := FExcludeFilter.Keys.ToArray;
+end;
+
 function TMessageDispatcherBase.GetTarget: TObject;
 begin
   result := FTarget;
@@ -294,7 +320,7 @@ end;
 
 procedure TMessageDispatcherBase.SendMessage(const Message: IMessage);
 begin
-  if FEnabled and (FTarget <> nil) then
+  if FEnabled and (FTarget <> nil) and WillAcceptMessage(message.Id) then
   begin
     FTarget.Dispatch(Message.MessagePtr^);
   end;
@@ -329,9 +355,65 @@ begin
   FEnabled := value;
 end;
 
+procedure TMessageDispatcherBase.SetExcludeFilter(const excludeFilter: TArray<Cardinal>);
+var
+  key : Cardinal;
+begin
+  if Length(excludeFilter) > 0 then
+  begin
+    if FExcludeFilter <> nil then
+      FExcludeFilter.Clear
+    else
+      FExcludeFilter := TDictionary<Cardinal,byte>.Create;
+      
+    for key in excludeFilter do
+    begin
+      FExcludeFilter.AddOrSetValue(key,0);
+    end;
+  end
+  else if FExcludeFilter <> nil then
+    FreeAndNil(FExcludeFilter);
+end;
+
+procedure TMessageDispatcherBase.SetIncludeFilter(const includeFilter: TArray<Cardinal>);
+var
+  key : Cardinal;
+begin
+  if Length(includeFilter) > 0 then
+  begin
+    if FIncludeFilter <> nil then
+      FIncludeFilter.Clear
+    else
+      FIncludeFilter := TDictionary<Cardinal,byte>.Create;
+      
+    for key in includeFilter do
+    begin
+      FIncludeFilter.AddOrSetValue(key,0);
+    end;
+  end
+  else if FIncludeFilter <> nil then
+    FreeAndNil(FIncludeFilter);
+end;
+
 procedure TMessageDispatcherBase.SetTarget(const value: TObject);
 begin
   FTarget := Value;
+end;
+
+function TMessageDispatcherBase.WillAcceptMessage(const id: Cardinal): boolean;
+begin
+  result := false;
+  if FIncludeFilter <> nil then
+  begin
+    if not FIncludeFilter.ContainsKey(id) then
+      exit;
+  end;
+  if FExcludeFilter <> nil then
+  begin
+    if FExcludeFilter.ContainsKey(id) then
+      exit;
+  end;
+  result := true;  
 end;
 
 { TMessageDispatcherUIThread }

@@ -22,6 +22,7 @@ type
   public
     { Public declarations }
     procedure Init(const channel : IMessageChannel);
+    procedure SetExcludeFilter(const filter : TArray<Cardinal>);
     constructor Create(AOwner: TComponent); override;
     destructor Destroy;override;
   end;
@@ -35,8 +36,9 @@ implementation
 constructor TMsgRecieverFrame.Create(AOwner: TComponent);
 begin
   inherited;
-  FDispatcher := TMessageDispatcherFactory.CreateUIDispatcher; //note it's  a UI message dispatcher, it will use Synchronize
-  FDispatcher.Target := Self; //Dispatch the messages to this object.
+  //either pass in the target for the messages, or set the Target Property.
+  FDispatcher := TMessageDispatcherFactory.CreateUIDispatcher(self); //note it's  a UI message dispatcher, it will use Synchronize
+//  FDispatcher.Target := Self; //Dispatch the messages to this object.
 
 end;
 
@@ -67,6 +69,11 @@ procedure TMsgRecieverFrame.Progress(var msg: TProgressMessage);
 begin
   ProgressBar1.Position := msg.Progress;
 
+end;
+
+procedure TMsgRecieverFrame.SetExcludeFilter(const filter: TArray<Cardinal>);
+begin
+  FDispatcher.ExcludeFilter := filter;
 end;
 
 end.

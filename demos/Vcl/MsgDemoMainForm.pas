@@ -16,11 +16,13 @@ type
     thrdSendButton: TButton;
     sayHelloSyncButton: TButton;
     chkAsync: TCheckBox;
+    chkExclude: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure helloButtonClick(Sender: TObject);
     procedure goodbyeButtonClick(Sender: TObject);
     procedure thrdSendButtonClick(Sender: TObject);
     procedure sayHelloSyncButtonClick(Sender: TObject);
+    procedure chkExcludeClick(Sender: TObject);
   private
     FChannel : IMessageChannel;
   public
@@ -36,6 +38,14 @@ implementation
 
 uses
   MsgDemoMessages;
+
+procedure TForm2.chkExcludeClick(Sender: TObject);
+begin
+  if chkExclude.Checked then
+    rx1.SetExcludeFilter([DEMO_MSG_GOODBYE])
+  else
+    rx1.SetExcludeFilter([]);
+end;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin

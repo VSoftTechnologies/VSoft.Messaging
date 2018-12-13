@@ -57,6 +57,8 @@ type
   IMessage = interface
     ['{8E3E653D-D9B7-4B2B-81FA-9E6A035B3D4B}']
     function MessagePtr : Pointer;
+    function GetMessageID : Word;
+    property Id : Word read GetMessageID;
   end;
   {$M-}
 
@@ -67,6 +69,7 @@ type
     FMsgData: T;
   protected
     function MessagePtr : Pointer;
+    function GetMessageID : Word;
   public
     constructor Create(const AMsgData: T);
     destructor Destroy;override;
@@ -137,6 +140,11 @@ end;
 destructor TVSMessageWrapper<T>.Destroy;
 begin
   inherited;
+end;
+
+function TVSMessageWrapper<T>.GetMessageID: Word;
+begin
+  result := PWord(@FMsgData)^;
 end;
 
 function TVSMessageWrapper<T>.MessagePtr: Pointer;
