@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "id": "VSoft.Messaging",
+    "version": "0.0.1",
+    "description": "VSoft.Messaging is a libary that provides an internal synchronous/asynchronous publish/subscribe messaging system for Delphi applications.",
+    "authors": "Vincent Parrett",
+    "projectUrl": "https://github.com/VSoftTechnologies/VSoft.SemanticVersion",
+    "license": "Apache-2.0",
+    "copyright": "Vincent Parrett and contributors",
+    "tags": "messaging publish subscribe"
+  },
+  "targetPlatforms": [
+    {
+      "compiler": "XE2",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "XE3",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "XE4",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "XE5",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "XE6",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "XE7",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "XE8",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "10.0",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "10.1",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "10.2",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    },
+    {
+      "compiler": "10.3",
+      "platforms": "Win32, Win64",
+      "template": "default"
+    }
+  ],
+  "templates": [
+    {
+      "name": "default",
+      "dependencies": [
+        {
+          "id": "VSoft.WeakReference",
+          "version": "[0.0.1,]"
+        }
+      ],
+      "source": [
+        {
+          "src": "src\\**\\*.pas",
+          "dest": "src",
+          "flatten": true
+        }
+      ],
+      "searchPaths": [
+        {
+          "path": "src"
+        }
+      ]
+    }
+  ]
+}

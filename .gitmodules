@@ -1,3 +1,0 @@
-[submodule "libs/weakref"]
-	path = libs/weakref
-	url = https://github.com/VSoftTechnologies/Delphi-WeakReferences.git
