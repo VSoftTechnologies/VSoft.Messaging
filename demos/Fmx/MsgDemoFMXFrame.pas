@@ -16,7 +16,7 @@ type
     FDispatcher : IMessageDispatcher;
   protected
     procedure Hello(var msg : THelloMessage); message DEMO_MSG_HELLO;
-    procedure GoodBye(var msg : THelloMessage); message DEMO_MSG_GOODBYE;
+    procedure GoodBye(var msg : TGoodbyeMessage); message DEMO_MSG_GOODBYE;
     procedure Progress(var msg : TProgressMessage); message DEMO_MSG_PROGRESS;
   public
     { Public declarations }
@@ -55,7 +55,7 @@ begin
   inherited;
 end;
 
-procedure TFrame1.GoodBye(var msg: THelloMessage);
+procedure TFrame1.GoodBye(var msg: TGoodbyeMessage);
 begin
   LogMemo.Lines.Add('Goodbye ' + msg.Name);
 end;
