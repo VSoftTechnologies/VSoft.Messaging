@@ -90,7 +90,7 @@ end;
 class procedure TMessagingControl.DecrementGlobalQueueDepth;
 begin
   if TInterlocked.Decrement(FGlobalQueueDepth) = cUnblockedThreshold then
-    FUnblockedSignal.SetEvent; // Unblock "SleepUntilQeuesUnblock"
+    FUnblockedSignal.SetEvent; // Unblock "PushbackIfNeeded"
 end;
 
 class destructor TMessagingControl.Destroy;
@@ -106,7 +106,7 @@ end;
 class procedure TMessagingControl.IncrementGlobalQueueDepth;
 begin
   if TInterlocked.Increment(FGlobalQueueDepth) = cBlockedThreshold then
-    FUnblockedSignal.ResetEvent; // Block "SleepUntilQueuesUnblock"
+    FUnblockedSignal.ResetEvent; // Block "PushbackIfNeeded"
 end;
 
 class procedure TMessagingControl.PushbackIfNeeded;
