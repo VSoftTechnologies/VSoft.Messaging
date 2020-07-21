@@ -64,7 +64,7 @@ type
 
   //used to transport the message from the channel to the dispatchers
   //wraps up the message record.
-  TVSMessageWrapper<T : record> = class(TInterfacedObject,IMessage)
+  TVSMessageWrapper<T> = class(TInterfacedObject,IMessage)
   private
     FMsgData: T;
   protected

@@ -44,10 +44,11 @@ type
     FPostMessageProc : TMessageProc;
     FSendMessageProc : TMessageProc;
   public
+    //10.4 update 2 broke record constraints, commenting out for now.
     //async
-    procedure PostMessage<T : record>(const message : T);
+    procedure PostMessage<T {: record}>(const message : T);
     //sync
-    procedure SendMessage<T : record>(const message : T);
+    procedure SendMessage<T {: record}>(const message : T);
     constructor Create(const postMessageProc : TMessageProc; const sendMessageProc : TMessageProc);
   end;
 
