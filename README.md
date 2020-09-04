@@ -107,7 +107,7 @@ end;
 
 ````
 
-NOTE:  If you are handling messages on forms/frames/controls where you will be making UI updates, then you should use `TMessageDispatcherFactory.CreateUIDispatcher` - this ensures that messages are only dispatched on the main thread (calls TThread.Queue ) . For performance reasons CreateUIDispatcher should not be used for non ui code, and you should avoid using too many ui dispatchers (ie m)
+NOTE:  If you are handling messages on forms/frames/controls where you will be making UI updates, then you should use `TMessageDispatcherFactory.CreateUIDispatcher` - this ensures that messages are only dispatched on the main thread (calls TThread.Queue ) . For performance reasons CreateUIDispatcher should not be used for non ui code, and you should avoid using too many ui dispatchers hooked to the same channel.
 
 ### Handling Messages
 
