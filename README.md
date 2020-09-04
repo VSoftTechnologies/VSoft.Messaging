@@ -26,15 +26,15 @@ type
     //payload starts here.
     ProjectName   : string;
   public
-    constructor Create(const projectName : string);
+    constructor Create(const theProjectName : string);
   end;
 
 implementation
 
-constructor TProjectOpenedMessage.Create(const projectName : string);
+constructor TProjectOpenedMessage.Create(const theProjectName : string);
 begin
   MsgID := PROJECT_OPENED_MSG;  //assign our message id
-  ProjectName := projectName; //store the payload.
+  ProjectName := theProjectName; //store the payload.
 end;
 
 ````  
