@@ -26,15 +26,15 @@ type
     //payload starts here.
     ProjectName   : string;
   public
-    constructor Create(const projectName : string);
+    constructor Create(const theProjectName : string);
   end;
 
 implementation
 
-constructor TProjectOpenedMessage.Create(const projectName : string);
+constructor TProjectOpenedMessage.Create(const theProjectName : string);
 begin
   MsgID := PROJECT_OPENED_MSG;  //assign our message id
-  ProjectName := projectName; //store the payload.
+  ProjectName := theProjectName; //store the payload.
 end;
 
 ````  
@@ -107,7 +107,7 @@ end;
 
 ````
 
-NOTE:  If you are handling messages on forms/frames/controls where you will be making UI updates, then you should use `TMessageDispatcherFactory.CreateUIDispatcher` - this ensures that messages are only dispatched on the main thread (calls TThread.Queue ) . For performance reasons CreateUIDispatcher should not be used for non ui code, and you should avoid using too many ui dispatchers (ie m)
+NOTE:  If you are handling messages on forms/frames/controls where you will be making UI updates, then you should use `TMessageDispatcherFactory.CreateUIDispatcher` - this ensures that messages are only dispatched on the main thread (calls TThread.Queue ) . For performance reasons CreateUIDispatcher should not be used for non ui code, and you should avoid using too many ui dispatchers hooked to the same channel.
 
 ### Handling Messages
 
