@@ -300,14 +300,14 @@ end;
 
 function TMessageDispatcherBase.GetExcludeFilter: TArray<Cardinal>;
 begin
-  result := [];
+  SetLength(result,0);
   if FExcludeFilter <> nil then
     result := FExcludeFilter.Keys.ToArray;
 end;
 
 function TMessageDispatcherBase.GetIncludeFilter: TArray<Cardinal>;
 begin
-  result := [];
+  SetLength(result,0);
   if FExcludeFilter <> nil then
     result := FExcludeFilter.Keys.ToArray;
 end;
