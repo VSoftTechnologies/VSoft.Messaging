@@ -30,17 +30,12 @@ interface
 uses
   System.SyncObjs;
 
-const
-  cMaxBurst           = 20;  // Maxium number of message to dequeue and process in one go.
-  cBlockedThreshold   = 100; // Start waiting for queues to unblock at this global queue depth
-  cUnblockedThreshold = 50;  // Stop waiting at this queue depth  (must be at least one less than block threshold)
-
 type
   //used to control pushback etc
   TMessagingControl = class
   private
     class var
-      FGlobalQueueDepth : Integer;
+      FGlobalQueueDepth : integer;
       FUnblockedSignal : TEvent;
   public
     class constructor Create;
@@ -78,7 +73,8 @@ type
 implementation
 
 uses
-  System.Classes;
+  System.Classes,
+  VSoft.Messaging;
 
 { TMessagingControl }
 
@@ -89,7 +85,7 @@ end;
 
 class procedure TMessagingControl.DecrementGlobalQueueDepth;
 begin
-  if TInterlocked.Decrement(FGlobalQueueDepth) = cUnblockedThreshold then
+  if TInterlocked.Decrement(FGlobalQueueDepth) = TMessagingOptions.UnblockThreshold then
     FUnblockedSignal.SetEvent; // Unblock "PushbackIfNeeded"
 end;
 
@@ -105,7 +101,7 @@ end;
 
 class procedure TMessagingControl.IncrementGlobalQueueDepth;
 begin
-  if TInterlocked.Increment(FGlobalQueueDepth) = cBlockedThreshold then
+  if TInterlocked.Increment(FGlobalQueueDepth) = TMessagingOptions.BlockedThreshold then
     FUnblockedSignal.ResetEvent; // Block "PushbackIfNeeded"
 end;
 
@@ -113,7 +109,7 @@ class procedure TMessagingControl.PushbackIfNeeded;
 var
   res : TWaitResult;
 begin
-  if FGlobalQueueDepth < cBlockedThreshold then
+  if FGlobalQueueDepth < TMessagingOptions.BlockedThreshold then
     exit;
 
   if MainThreadID = TThread.CurrentThread.ThreadID then

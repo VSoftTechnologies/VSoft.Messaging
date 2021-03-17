@@ -986,8 +986,8 @@
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
         <DPM>
-            <PackageReference id="VSoft.WeakReference" platform="Win32" version="0.0.1"/>
-            <PackageReference id="VSoft.WeakReference" platform="Win64" version="0.0.1"/>
+            <PackageReference id="VSoft.WeakReference" platform="Win64" version="0.1.0"/>
+            <PackageReference id="VSoft.WeakReference" platform="Win32" version="0.1.0"/>
         </DPM>
     </ProjectExtensions>
     <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>

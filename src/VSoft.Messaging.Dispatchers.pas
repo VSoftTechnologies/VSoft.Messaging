@@ -202,7 +202,7 @@ begin
     end;
     while (not Self.Terminated) and (FDispatcher.FTarget <> nil) and (FDispatcher.FQueue.Count > 0) and FDispatcher.Enabled do
     begin
-      msgs := FDispatcher.DequeueAtMost(cMaxBurst);
+      msgs := FDispatcher.DequeueAtMost(TMessagingOptions.MaxBurst);
       for i := 0 to Length(msgs) -1 do
       begin
         try
@@ -427,12 +427,11 @@ begin
                   i : integer;
                   msgs : TArray<IMessage>;
                 begin
-                  msgs := FDispatcher.DequeueAtMost(cMaxBurst);
+                  msgs := FDispatcher.DequeueAtMost(TMessagingOptions.MaxBurst);
                   if Length(msgs) > 0 then
                   begin
                     for i := 0 to Length(msgs) -1 do
                     begin
-
                       if not FDispatcher.Enabled or Self.Terminated then
                         break;
                       try
@@ -441,8 +440,12 @@ begin
                         //not much we can do here!
                       end;
                       msgs[i] := nil;
-                      //potential tight loop.
-                      TThread.Yield;
+                      //potential tight loop, yield occasionally
+                      if TMessagingOptions.MaxBurst > 10 then
+                      begin
+                        if (i mod 10) = 0 then
+                          TThread.Yield;
+                      end;
                     end;
                   end;
                 end;
@@ -458,8 +461,10 @@ begin
     end;
     while (not Self.Terminated) and (FDispatcher.FTarget <> nil) and (FDispatcher.FQueue.Count > 0) and FDispatcher.Enabled do
     begin
-      TThread.Queue(nil,threadProc);
-      //potential tight loop, so allow other threads to run.
+      //since we are queuing messages and want them to complete processing before the next one is dispatched, we cannot use TThread.Queue here.
+      TThread.Synchronize(nil,threadProc);
+      //calls SwitchToThread - Causes the calling thread to yield execution to another thread that is ready to run on the current processor.
+      //The operating system selects the next thread to be executed.
       TThread.Yield;
     end;
   end;

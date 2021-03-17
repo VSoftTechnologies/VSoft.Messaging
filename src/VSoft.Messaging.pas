@@ -44,11 +44,10 @@ type
     FPostMessageProc : TMessageProc;
     FSendMessageProc : TMessageProc;
   public
-    //10.4 update 2 broke record constraints, commenting out for now.
     //async
-    procedure PostMessage<T {: record}>(const message : T);
+    procedure PostMessage<T : record>(const message : T);
     //sync
-    procedure SendMessage<T {: record}>(const message : T);
+    procedure SendMessage<T : record>(const message : T);
     constructor Create(const postMessageProc : TMessageProc; const sendMessageProc : TMessageProc);
   end;
 
@@ -140,6 +139,23 @@ type
     class function CreateUIDispatcher(const target : TObject = nil) : IMessageDispatcher;
   end;
 
+  TMessagingOptions = class
+  private
+    class var
+      FMaxBurst           : integer;  // Maxium number of message to dequeue and process in one go.
+      FBlockedThreshold   : integer; // Start waiting for queues to unblock at this global queue depth
+      FUnblockedThreshold : integer;
+  protected
+    class procedure SetMaxBurst(const Value: integer); static;  
+    class procedure SetBlockedThreshold(const Value: integer); static;
+    class procedure SetUnblockThreashold(const Value: integer); static;
+    class constructor Create;
+  public
+    class property MaxBurst : integer read FMaxBurst write SetMaxBurst;  // Maxium number of message to dequeue and process in one go.
+    class property BlockedThreshold : integer read FBlockedThreshold write SetBlockedThreshold; // Start waiting for queues to unblock at this global queue depth
+    class property UnblockThreshold : integer read FUnblockedThreshold write SetUnblockThreashold; //Stop waiting at this queue depth  (must be at least one less than block threshold)
+  end;
+
 implementation
 
 uses
@@ -147,6 +163,11 @@ uses
   VSoft.Messaging.Channel,
   VSoft.Messaging.Dispatchers;
 
+const
+  cDefaultMaxBurst           = 20;  // Maxium number of message to dequeue and process in one go.
+  cDefaultBlockedThreshold   = 100; // Start waiting for queues to unblock at this global queue depth
+  cDefaultUnblockedThreshold = 50;  // Stop waiting at this queue depth  (must be at least one less than block threshold)
+  
 
 
 { TChannelHelper }
@@ -192,6 +213,39 @@ end;
 class function TMessageDispatcherFactory.CreateUIDispatcher(const target : TObject = nil): IMessageDispatcher;
 begin
   result := TUIMessageDispatcher.Create(target);
+end;
+
+{ TMessagingOptions }
+
+class constructor TMessagingOptions.Create;
+begin
+  FMaxBurst := cDefaultMaxBurst;
+  FBlockedThreshold := cDefaultBlockedThreshold;
+  FUnblockedThreshold := cDefaultUnblockedThreshold;
+end;
+
+class procedure TMessagingOptions.SetBlockedThreshold(const Value: integer);
+begin
+  if value > 1  then
+    FBlockedThreshold := Value
+  else
+    FBlockedThreshold := 2;
+end;
+
+class procedure TMessagingOptions.SetMaxBurst(const Value: integer);
+begin
+  if value > 0 then
+    FMaxBurst := Value
+  else
+    FMaxBurst := 1; 
+end;
+
+class procedure TMessagingOptions.SetUnblockThreashold(const Value: integer);
+begin
+  if value < FBlockedThreshold -1 then
+    FUnblockedThreshold := Value
+  else
+    FUnblockedThreshold := FBlockedThreshold -1; 
 end;
 
 end.

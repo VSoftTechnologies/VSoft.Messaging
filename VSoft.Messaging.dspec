@@ -1,7 +1,7 @@
 {
   "metadata": {
     "id": "VSoft.Messaging",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "VSoft.Messaging is a libary that provides an internal synchronous/asynchronous publish/subscribe messaging system for Delphi applications.",
     "authors": "Vincent Parrett",
     "projectUrl": "https://github.com/VSoftTechnologies/VSoft.SemanticVersion",
@@ -104,6 +104,13 @@
           "id": "Runtime",
           "project": ".\\packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dproj"
         }
+      ],
+      "runtime" : [
+       {
+         "buildId" : "Runtime",
+         "src" : "bin\\VSoft.MessagingR$LibSuffix$.bpl",
+         "copyLocal" : true
+       }
       ]
     }
   ]
