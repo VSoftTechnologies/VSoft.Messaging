@@ -179,7 +179,7 @@ begin
     begin
       dispatcher := dispatchers[i];
       if dispatcher.Enabled then
-      (dispatcher as IMessageDispatcherPost).PostMessage(message);
+      (dispatcher as IMessageDispatcherPost).SendMessage(message);
     end;
   end;
 end;

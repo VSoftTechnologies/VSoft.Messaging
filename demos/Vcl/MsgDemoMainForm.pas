@@ -14,14 +14,12 @@ type
     helloButton: TButton;
     goodbyeButton: TButton;
     thrdSendButton: TButton;
-    sayHelloSyncButton: TButton;
     chkAsync: TCheckBox;
     chkExclude: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure helloButtonClick(Sender: TObject);
     procedure goodbyeButtonClick(Sender: TObject);
     procedure thrdSendButtonClick(Sender: TObject);
-    procedure sayHelloSyncButtonClick(Sender: TObject);
     procedure chkExcludeClick(Sender: TObject);
   private
     FChannel : IMessageChannel;
@@ -59,7 +57,10 @@ var
   msg : TGoodByeMessage;
 begin
   msg := TGoodByeMessage.Create('world');
-  FChannel.Queue.PostMessage(msg);
+  if chkAsync.Checked then
+    FChannel.Queue.PostMessage(msg)
+  else
+    FChannel.Queue.SendMessage(msg)
 end;
 
 procedure TForm2.helloButtonClick(Sender: TObject);
@@ -67,15 +68,10 @@ var
   msg : THelloMessage;
 begin
   msg := THelloMessage.Create('world');
-  FChannel.Queue.PostMessage(msg);
-end;
-
-procedure TForm2.sayHelloSyncButtonClick(Sender: TObject);
-var
-  msg : THelloMessage;
-begin
-  msg := THelloMessage.Create('world');
-  FChannel.Queue.SendMessage(msg);
+  if chkAsync.Checked then
+    FChannel.Queue.PostMessage(msg)
+  else
+    FChannel.Queue.SendMessage(msg)
 end;
 
 procedure TForm2.thrdSendButtonClick(Sender: TObject);

@@ -28,6 +28,7 @@ unit VSoft.Messaging.Internal;
 interface
 
 uses
+  System.Classes,
   System.SyncObjs;
 
 type
@@ -53,7 +54,9 @@ type
     ['{8E3E653D-D9B7-4B2B-81FA-9E6A035B3D4B}']
     function MessagePtr : Pointer;
     function GetMessageID : Word;
+    function GetThreadID : TThreadID;
     property Id : Word read GetMessageID;
+    property ThreadID : TThreadID read GetThreadID;
   end;
   {$M-}
 
@@ -62,9 +65,11 @@ type
   TVSMessageWrapper<T> = class(TInterfacedObject,IMessage)
   private
     FMsgData: T;
+    FThreadID : TThreadID;
   protected
     function MessagePtr : Pointer;
     function GetMessageID : Word;
+    function GetThreadID : TThreadID;
   public
     constructor Create(const AMsgData: T);
     destructor Destroy;override;
@@ -73,7 +78,6 @@ type
 implementation
 
 uses
-  System.Classes,
   VSoft.Messaging;
 
 { TMessagingControl }
@@ -131,6 +135,7 @@ begin
   inherited Create;
   Assert(SizeOf(AMsgData) > 12);
   FMsgData := AMsgData;
+  FThreadID := TThread.Current.ThreadID;
 end;
 
 destructor TVSMessageWrapper<T>.Destroy;
@@ -141,6 +146,11 @@ end;
 function TVSMessageWrapper<T>.GetMessageID: Word;
 begin
   result := PWord(@FMsgData)^;
+end;
+
+function TVSMessageWrapper<T>.GetThreadID: TThreadID;
+begin
+  result := FThreadID;
 end;
 
 function TVSMessageWrapper<T>.MessagePtr: Pointer;

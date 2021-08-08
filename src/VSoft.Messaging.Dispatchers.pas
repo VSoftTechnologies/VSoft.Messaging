@@ -46,6 +46,7 @@ type
 
   TMessageDispatcherBase = class(TInterfacedObject,IMessageDispatcher,IMessageDispatcherPost)
   private
+    FOwnerThreadId : TThreadID;
     FTarget     : TObject;
     FQueue      : TQueue<IMessage>;
     FChannel    : IWeakReference<IMessageChannel>;
@@ -70,8 +71,12 @@ type
     procedure SetEnabled(const value : boolean);
 
     function WillAcceptMessage(const id : Cardinal) : boolean;
-    
-    procedure PostMessage(const Message: IMessage);virtual;abstract;
+
+    procedure DoPostMessage(const Message: IMessage);virtual;abstract;
+    procedure DoSendMessage(const Message: IMessage);virtual;
+
+
+    procedure PostMessage(const Message: IMessage);
     procedure SendMessage(const Message: IMessage);
   public
     constructor Create(const target : TObject = nil);virtual;
@@ -108,12 +113,14 @@ type
   public
     constructor Create(const target : TObject = nil);override;
     destructor Destroy;override;
-    procedure PostMessage(const Message : IMessage);override;
+    procedure DoPostMessage(const Message : IMessage);override;
   end;
 
   TUIMessageDispatcher = class(TThreadedMessageDispatcher)
   protected
+
     function GetThreadClass : TMessageDispatcherThreadClass; override;
+    procedure DoSendMessage(const Message: IMessage); override;
   end;
 
   TMessageDispatcherUIThread = class(TMessageDispatcherThread)
@@ -152,7 +159,7 @@ begin
   result := TMessageDispatcherThread;
 end;
 
-procedure TThreadedMessageDispatcher.PostMessage(const Message: IMessage);
+procedure TThreadedMessageDispatcher.DoPostMessage(const Message: IMessage);
 begin
   if FEnabled and (FTarget <> nil) and WillAcceptMessage(message.Id) then
   begin
@@ -248,6 +255,7 @@ begin
   FQueueLock := TCriticalSection.Create;
   FEnabled := True;
   FChannel := nil;
+  FOwnerThreadId := TThread.Current.ThreadID;
 end;
 
 function TMessageDispatcherBase.DequeueAtMost(const count: integer): TArray<IMessage>;
@@ -287,6 +295,14 @@ begin
   inherited;
 end;
 
+procedure TMessageDispatcherBase.DoSendMessage(const Message: IMessage);
+begin
+  if FEnabled and (FTarget <> nil) and WillAcceptMessage(message.Id) then
+  begin
+    FTarget.Dispatch(Message.MessagePtr^);
+  end;
+end;
+
 function TMessageDispatcherBase.GetChannel: IMessageChannel;
 begin
   result := FChannel.Data;
@@ -318,12 +334,14 @@ begin
 end;
 
 
+procedure TMessageDispatcherBase.PostMessage(const Message: IMessage);
+begin
+  DoPostMessage(Message);
+end;
+
 procedure TMessageDispatcherBase.SendMessage(const Message: IMessage);
 begin
-  if FEnabled and (FTarget <> nil) and WillAcceptMessage(message.Id) then
-  begin
-    FTarget.Dispatch(Message.MessagePtr^);
-  end;
+  DoSendMessage(Message);
 end;
 
 procedure TMessageDispatcherBase.SetChannel(const value: IMessageChannel);
@@ -474,6 +492,15 @@ end;
 
 
 { TUIMessageDispatcher }
+
+procedure TUIMessageDispatcher.DoSendMessage(const Message: IMessage);
+begin
+  //if the message wasn't sent from the main thread then queue it!
+  if Message.ThreadID <> FOwnerThreadId then
+    DoPostMessage(Message)
+  else
+    inherited DoSendMessage(Message);
+end;
 
 function TUIMessageDispatcher.GetThreadClass: TMessageDispatcherThreadClass;
 begin
