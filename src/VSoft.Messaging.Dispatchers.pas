@@ -324,8 +324,8 @@ end;
 function TMessageDispatcherBase.GetIncludeFilter: TArray<Cardinal>;
 begin
   SetLength(result,0);
-  if FExcludeFilter <> nil then
-    result := FExcludeFilter.Keys.ToArray;
+  if FIncludeFilter <> nil then
+    result := FIncludeFilter.Keys.ToArray;
 end;
 
 function TMessageDispatcherBase.GetTarget: TObject;
