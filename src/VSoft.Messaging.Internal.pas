@@ -135,7 +135,7 @@ begin
   inherited Create;
   Assert(SizeOf(AMsgData) > 12);
   FMsgData := AMsgData;
-  FThreadID := TThread.Current.ThreadID;
+  FThreadID := TThread.CurrentThread.ThreadID;
 end;
 
 destructor TVSMessageWrapper<T>.Destroy;

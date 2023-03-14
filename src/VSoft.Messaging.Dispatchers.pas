@@ -32,7 +32,6 @@ uses
   System.SysUtils,
   Generics.Collections,
   System.SyncObjs,
-  VSoft.WeakReference,
   VSoft.Messaging.Internal,
   VSoft.Messaging;
 
@@ -49,7 +48,7 @@ type
     FOwnerThreadId : TThreadID;
     FTarget     : TObject;
     FQueue      : TQueue<IMessage>;
-    FChannel    : IWeakReference<IMessageChannel>;
+    FChannel    : IMessageChannel;
     FQueueLock  : TCriticalSection;
     FEnabled    : boolean;
     FIncludeFilter : TDictionary<Cardinal,byte>;
@@ -217,13 +216,9 @@ begin
         except
           on e : Exception do
           begin
-            if (FDispatcher.FChannel <> nil) and FDispatcher.FChannel.IsAlive then
-            begin
-              //this does an addref to make sure we don't get the rug pulled out.
-              channel := FDispatcher.FChannel.Data;
-              if channel <> nil then
+            channel := FDispatcher.FChannel;  //keep the instance alive.
+            if (channel <> nil) then
                  channel.HandleError(e.Message);
-            end;
           end;
         end;
         msgs[i] := nil;
@@ -255,7 +250,8 @@ begin
   FQueueLock := TCriticalSection.Create;
   FEnabled := True;
   FChannel := nil;
-  FOwnerThreadId := TThread.Current.ThreadID;
+
+  FOwnerThreadId := TThread.CurrentThread.ThreadID;
 end;
 
 function TMessageDispatcherBase.DequeueAtMost(const count: integer): TArray<IMessage>;
@@ -305,7 +301,7 @@ end;
 
 function TMessageDispatcherBase.GetChannel: IMessageChannel;
 begin
-  result := FChannel.Data;
+  result := FChannel;
 end;
 
 
@@ -348,23 +344,14 @@ procedure TMessageDispatcherBase.SetChannel(const value: IMessageChannel);
 var
   oldChannel : IMessageChannel;
 begin
-  if ((FChannel <> nil) and (FChannel.Data <> value)) or ((FChannel = nil) and (value <> nil)) then
+  oldChannel := FChannel;
+  if (oldChannel <> nil) or  (value <> nil) then
   begin
+    if (oldChannel <> nil)  then
+      oldChannel.UnSubscribe(Self);
+    FChannel := value;
     if FChannel <> nil then
-    begin
-      if FChannel.IsAlive then
-      begin
-        oldChannel := FChannel.Data;
-        if oldChannel <> nil then
-          oldChannel.UnSubscribe(Self);
-      end;
-    end;
-    if value <> nil then
-      FChannel := TWeakReference<IMessageChannel>.Create(value)
-    else
-      FChannel := nil;
-    if FChannel <> nil then
-      FChannel.Data.Subscribe(Self);
+      FChannel.Subscribe(Self);
   end;
 end;
 

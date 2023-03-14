@@ -93,7 +93,7 @@ begin
           FChannel.Queue.PostMessage(msg)
         else
           FChannel.Queue.SendMessage(msg);
-       // TThread.Sleep(40);
+        TThread.Sleep(1);
       end;
     end;
   TThread.CreateAnonymousThread(proc).Start;

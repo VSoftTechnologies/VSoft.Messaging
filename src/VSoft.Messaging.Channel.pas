@@ -30,7 +30,6 @@ interface
 uses
   classes,
   Generics.Collections,
-  VSoft.WeakReference,
   VSoft.Messaging.Internal,
   VSoft.Messaging;
 
@@ -41,7 +40,7 @@ type
     procedure PostMessage(const message : IMessage);
   end;
 
-  TVSoftMessageChannel = class(TWeakReferencedObject,IMessageChannel, IMessageChannelPost)
+  TVSoftMessageChannel = class(TInterfacedObject,IMessageChannel, IMessageChannelPost)
   private
     FDispatchersLock : TObject;
     FDispatchers : TList<IMessageDispatcher>;

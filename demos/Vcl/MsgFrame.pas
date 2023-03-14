@@ -67,7 +67,8 @@ end;
 
 procedure TMsgRecieverFrame.Progress(var msg: TProgressMessage);
 begin
-  ProgressBar1.Position := msg.Progress;
+  if ProgressBar1.Position <> msg.Progress then
+    ProgressBar1.Position := msg.Progress;
 
 end;
 
