@@ -45,9 +45,11 @@ type
     FSendMessageProc : TMessageProc;
   public
     //async
-    procedure PostMessage<T : record>(const message : T);
+//    procedure PostMessage<T : record>(const message : T); //12.3 breaks the record constraint
+    procedure PostMessage<T>(const message : T);
     //sync
-    procedure SendMessage<T : record>(const message : T);
+//    procedure SendMessage<T : record>(const message : T); //12.3 breaks the record constraint
+    procedure SendMessage<T>(const message : T);
     constructor Create(const postMessageProc : TMessageProc; const sendMessageProc : TMessageProc);
   end;
 
@@ -184,6 +186,7 @@ procedure TChannelHelper.PostMessage<T>(const message: T);
 var
   msg : IMessage;
 begin
+  Assert(GetTypeKind(T) in [tkRecord,tkMRecord]);  //12.3 breaks the record constraint so doing runtime test instead
   msg := TVSMessageWrapper<T>.Create(message);
   FPostMessageProc(msg);
 end;
@@ -192,6 +195,7 @@ procedure TChannelHelper.SendMessage<T>(const message: T);
 var
   msg : IMessage;
 begin
+  Assert(GetTypeKind(T) in [tkRecord,tkMRecord]);   //12.3 breaks the record constraint so doing runtime test instead
   msg := TVSMessageWrapper<T>.Create(message);
   FSendMessageProc(msg);
 end;

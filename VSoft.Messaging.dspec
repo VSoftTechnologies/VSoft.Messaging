@@ -1,7 +1,7 @@
 {
   "metadata": {
     "id": "VSoft.Messaging",
-    "version": "0.3.8",
+    "version": "0.4.0",
     "description": "VSoft.Messaging is a libary that provides an internal synchronous/asynchronous publish/subscribe messaging system for Delphi applications.",
     "authors": "Vincent Parrett",
     "projectUrl": "https://github.com/VSoftTechnologies/VSoft.Messaging",
