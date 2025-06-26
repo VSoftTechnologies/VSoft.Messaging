@@ -1,157 +1,165 @@
 {
-  "metadata": {
-    "id": "VSoft.Messaging",
-    "version": "0.4.0",
-    "description": "VSoft.Messaging is a libary that provides an internal synchronous/asynchronous publish/subscribe messaging system for Delphi applications.",
-    "authors": "Vincent Parrett",
-    "projectUrl": "https://github.com/VSoftTechnologies/VSoft.Messaging",
-    "repositoryUrl": "https://github.com/VSoftTechnologies/VSoft.Messaging",
-    "license": "Apache-2.0",
-    "copyright": "Vincent Parrett and contributors",
-    "tags": "messaging publish subscribe"
+ "metadata": {
+  "id": "VSoft.Messaging",
+  "version": "0.4.1",
+  "description": "VSoft.Messaging is a libary that provides an internal synchronous/asynchronous publish/subscribe messaging system for Delphi applications.",
+  "authors": "Vincent Parrett",
+  "projectUrl": "https://github.com/VSoftTechnologies/VSoft.Messaging",
+  "repositoryUrl": "https://github.com/VSoftTechnologies/VSoft.Messaging",
+  "license": "Apache-2.0",
+  "copyright": "Vincent Parrett and contributors",
+  "tags": "messaging publish subscribe",
+  "readme": "README.md"
+ },
+ "targetPlatforms": [
+  {
+   "compiler": "12.0",
+   "platforms": "Win32, Win64",
+   "template": "12+"
   },
-  "targetPlatforms": [
+  {
+   "compiler": "11.0",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "10.4",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "10.3",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "10.2",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "10.1",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "10.0",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE8",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE7",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE6",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE5",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE4",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE3",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "XE2",
+   "platforms": "Win32, Win64",
+   "template": "default"
+  },
+  {
+   "compiler": "13.0",
+   "platforms": "Win32, Win64",
+   "template": "12+"
+  }
+ ],
+ "templates": [
+  {
+   "name": "12+",
+   "source": [
     {
-      "compiler": "XE2",
-      "platforms": "Win32, Win64",
-      "template": "default"
+     "src": "src\\**\\*.pas",
+     "dest": "src"
     },
     {
-      "compiler": "XE3",
-      "platforms": "Win32, Win64",
-      "template": "default"
+     "src": "packages\\Rad Studio $compilerNoPoint$\\VSoft.MessagingR.dpk",
+     "dest": "packages\\Rad Studio $compilerNoPoint$"
     },
     {
-      "compiler": "XE4",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "XE5",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "XE6",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "XE7",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "XE8",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "10.0",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "10.1",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "10.2",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "10.3",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "10.4",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "11.0",
-      "platforms": "Win32, Win64",
-      "template": "default"
-    },
-    {
-      "compiler": "12.0",
-      "platforms": "Win32, Win64",
-      "template": "12+"
+     "src": "packages\\Rad Studio $compilerNoPoint$\\VSoft.MessagingR.dproj",
+     "dest": "packages\\Rad Studio $compilerNoPoint$"
     }
-  ],
-  "templates": [
+   ],
+   "searchPaths": [
     {
-      "name": "default",
-      "source": [
-        {
-          "src": "src\\**\\*.pas",
-          "dest": "src"
-        },
-        {
-          "src": "packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dpk",
-          "dest": "packages\\Rad Studio $compilerWithCodeName$"
-        },
-        {
-          "src": "packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dproj",
-          "dest": "packages\\Rad Studio $compilerWithCodeName$"
-        }
-      ],
-      "searchPaths": [
-        {
-          "path": "src"
-        }
-      ],
-      "build": [
-        {
-          "id": "Runtime",
-          "project": ".\\packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dproj"
-        }
-      ],
-      "runtime" : [
-       {
-         "buildId" : "Runtime",
-         "src" : "bin\\VSoft.MessagingR$LibSuffix$.bpl",
-         "copyLocal" : true
-       }
-      ]
+     "path": "src"
+    }
+   ],
+   "build": [
+    {
+     "id": "Runtime",
+     "project": ".\\packages\\Rad Studio $compilerNoPoint$\\VSoft.MessagingR.dproj",
+     "config": "Release"
+    }
+   ],
+   "runtime": [
+    {
+     "buildId": "Runtime",
+     "src": "bin\\VSoft.MessagingR$LibSuffix$.bpl",
+     "copyLocal": true
+    }
+   ]
+  },
+  {
+   "name": "default",
+   "source": [
+    {
+     "src": "src\\**\\*.pas",
+     "dest": "src"
     },
     {
-      "name": "12+",
-      "source": [
-        {
-          "src": "src\\**\\*.pas",
-          "dest": "src"
-        },
-        {
-          "src": "packages\\Rad Studio $compilerNoPoint$\\VSoft.MessagingR.dpk",
-          "dest": "packages\\Rad Studio $compilerNoPoint$"
-        },
-        {
-          "src": "packages\\Rad Studio $compilerNoPoint$\\VSoft.MessagingR.dproj",
-          "dest": "packages\\Rad Studio $compilerNoPoint$"
-        }
-      ],
-      "searchPaths": [
-        {
-          "path": "src"
-        }
-      ],
-      "build": [
-        {
-          "id": "Runtime",
-          "project": ".\\packages\\Rad Studio $compilerNoPoint$\\VSoft.MessagingR.dproj"
-        }
-      ],
-      "runtime" : [
-       {
-         "buildId" : "Runtime",
-         "src" : "bin\\VSoft.MessagingR$LibSuffix$.bpl",
-         "copyLocal" : true
-       }
-      ]
+     "src": "packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dpk",
+     "dest": "packages\\Rad Studio $compilerWithCodeName$"
+    },
+    {
+     "src": "packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dproj",
+     "dest": "packages\\Rad Studio $compilerWithCodeName$"
     }
-  ]
+   ],
+   "searchPaths": [
+    {
+     "path": "src"
+    }
+   ],
+   "build": [
+    {
+     "id": "Runtime",
+     "project": ".\\packages\\Rad Studio $compilerWithCodeName$\\VSoft.MessagingR.dproj",
+     "config": "Release"
+    }
+   ],
+   "runtime": [
+    {
+     "buildId": "Runtime",
+     "src": "bin\\VSoft.MessagingR$LibSuffix$.bpl",
+     "copyLocal": true
+    }
+   ]
+  }
+ ]
 }
