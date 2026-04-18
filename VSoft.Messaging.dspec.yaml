@@ -1,0 +1,52 @@
+# DPM package spec file
+# Used to build packages
+
+min client version: 1.0
+# metadata describes the package to the user
+metadata:
+  id: VSoft.Messaging
+  version: 0.4.2
+  authors: [ Vincent Parrett ]
+  description: VSoft.Messaging is a libary that provides an internal synchronous/asynchronous publish/subscribe messaging system for Delphi applications.
+  projectUrl: https://github.com/VSoftTechnologies/VSoft.Messaging
+  repositoryUrl: https://github.com/VSoftTechnologies/VSoft.Messaging
+  license: Apache-2.0
+  readme: README.md
+  copyright: Vincent Parrett and contributors
+  tags: [ messaging, publish, subscribe ]
+  repositoryCommit: Id:d00df52b83a516a673037d0443c44306f464ebdb
+
+# define variable defaults - can be overriden in targetPlatforms
+variables:
+  packageSource: "Rad Studio $compilernoprefix$"
+
+# package folder names are a mess. 
+targetPlatforms:
+  - compiler from: delphixe2
+    compiler to: delphixe8
+    platforms: [ win32, win64 ]
+  - compiler from: delphi10.0
+    compiler to: delphi10.4
+    platforms: [ win32, win64 ]
+    variables:
+      packageSource: "Rad Studio $compilernoprefix$ $compilerCodeName$"
+  - compilers: [ delphi11 ]
+    platforms: [ win32, win64 ]
+    variables:
+      packageSource: "Rad Studio $compilernoprefix$.0 $compilerCodeName$"
+  - compiler from: delphi12
+    compiler to: delphi13
+    platforms: [ win32, win64 ]
+    variables:
+      packageSource: "Rad Studio $compilernoprefix$"
+
+templates:
+  - name: default
+    source:
+      - src: ./src/*.pas
+      - src: ./packages/$packageSource$/*.dpk
+        dest: ./packages/$packageSource$
+      - src: ./packages/$packageSource$/*.dproj
+        dest: ./packages/$packageSource$
+    build:
+      - project: ./packages/$packageSource$/VSoft.MessagingR.dproj
