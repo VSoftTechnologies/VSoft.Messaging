@@ -162,6 +162,7 @@ implementation
 
 uses
   System.Classes,
+  System.TypInfo,
   VSoft.Messaging.Channel,
   VSoft.Messaging.Dispatchers;
 
@@ -169,7 +170,7 @@ const
   cDefaultMaxBurst           = 20;  // Maxium number of message to dequeue and process in one go.
   cDefaultBlockedThreshold   = 100; // Start waiting for queues to unblock at this global queue depth
   cDefaultUnblockedThreshold = 50;  // Stop waiting at this queue depth  (must be at least one less than block threshold)
-  
+
 
 
 { TChannelHelper }
@@ -186,7 +187,9 @@ procedure TChannelHelper.PostMessage<T>(const message: T);
 var
   msg : IMessage;
 begin
-  Assert(GetTypeKind(T) in [tkRecord,tkMRecord]);  //12.3 breaks the record constraint so doing runtime test instead
+  //12.3 breaks the record constraint so doing runtime test instead.
+  //GetTypeKind is not available before XE7, tkMRecord was added in 10.3
+  Assert(PTypeInfo(TypeInfo(T)).Kind in [tkRecord{$IF CompilerVersion >= 33.0}, tkMRecord{$IFEND}]);
   msg := TVSMessageWrapper<T>.Create(message);
   FPostMessageProc(msg);
 end;
@@ -195,7 +198,9 @@ procedure TChannelHelper.SendMessage<T>(const message: T);
 var
   msg : IMessage;
 begin
-  Assert(GetTypeKind(T) in [tkRecord,tkMRecord]);   //12.3 breaks the record constraint so doing runtime test instead
+  //12.3 breaks the record constraint so doing runtime test instead.
+  //GetTypeKind is not available before XE7, tkMRecord was added in 10.3
+  Assert(PTypeInfo(TypeInfo(T)).Kind in [tkRecord{$IF CompilerVersion >= 33.0}, tkMRecord{$IFEND}]);
   msg := TVSMessageWrapper<T>.Create(message);
   FSendMessageProc(msg);
 end;
