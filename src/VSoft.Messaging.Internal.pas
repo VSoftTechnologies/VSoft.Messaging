@@ -32,18 +32,16 @@ uses
   System.SyncObjs;
 
 type
-  //used to control pushback etc
   TMessagingControl = class
   private
     class var
       FGlobalQueueDepth : integer;
-      FUnblockedSignal : TEvent;
   public
-    class constructor Create;
-    class destructor Destroy;
-
+    //The number of posted messages, across every channel, that have not yet been handled (or discarded)
+    //by every dispatcher that accepted them. 0 means everything posted so far has been handled.
+    //Prefer IMessageChannel.Flush or IMessageDispatcher.WaitUntilIdle to polling this.
     class function GetGlobalQueueDepth : integer;
-    class procedure PushbackIfNeeded;
+    //Kept for compatibility. They only adjust the value returned by GetGlobalQueueDepth.
     class procedure IncrementGlobalQueueDepth;
     class procedure DecrementGlobalQueueDepth;
   end;
@@ -72,75 +70,79 @@ type
     function GetThreadID : TThreadID;
   public
     constructor Create(const AMsgData: T);
-    destructor Destroy;override;
   end;
+
+//The calling thread's id. Unlike TThread.CurrentThread it does not create a TExternalThread
+//object for threads that were not started by Delphi.
+function CurrentThreadId : TThreadID;
+
+function IsMainThread : boolean;
+
+//True on threads the library runs message handlers on. Backpressure never blocks these threads,
+//since they are the ones that drain the queues.
+function IsDispatcherThread : boolean;
+procedure MarkAsDispatcherThread;
 
 implementation
 
+{$IFDEF MSWINDOWS}
 uses
-  VSoft.Messaging;
+  Winapi.Windows;
+{$ENDIF}
+
+threadvar
+  GIsDispatcherThread : boolean;
+
+function CurrentThreadId : TThreadID;
+begin
+  {$IFDEF MSWINDOWS}
+  result := Winapi.Windows.GetCurrentThreadId;
+  {$ELSE}
+  result := TThread.CurrentThread.ThreadID;
+  {$ENDIF}
+end;
+
+function IsMainThread : boolean;
+begin
+  result := CurrentThreadId = MainThreadID;
+end;
+
+function IsDispatcherThread : boolean;
+begin
+  result := GIsDispatcherThread;
+end;
+
+procedure MarkAsDispatcherThread;
+begin
+  GIsDispatcherThread := true;
+end;
 
 { TMessagingControl }
 
-class constructor TMessagingControl.Create;
-begin
-  FUnblockedSignal := TEvent.Create(nil, True, True, '', False); // Manual reset only
-end;
-
 class procedure TMessagingControl.DecrementGlobalQueueDepth;
 begin
-  if TInterlocked.Decrement(FGlobalQueueDepth) = TMessagingOptions.UnblockThreshold then
-    FUnblockedSignal.SetEvent; // Unblock "PushbackIfNeeded"
-end;
-
-class destructor TMessagingControl.Destroy;
-begin
-  FUnblockedSignal.Free;
+  TInterlocked.Decrement(FGlobalQueueDepth);
 end;
 
 class function TMessagingControl.GetGlobalQueueDepth: integer;
 begin
-  Result := FGlobalQueueDepth;
+  result := TInterlocked.CompareExchange(FGlobalQueueDepth, 0, 0);
 end;
 
 class procedure TMessagingControl.IncrementGlobalQueueDepth;
 begin
-  if TInterlocked.Increment(FGlobalQueueDepth) = TMessagingOptions.BlockedThreshold then
-    FUnblockedSignal.ResetEvent; // Block "PushbackIfNeeded"
+  TInterlocked.Increment(FGlobalQueueDepth);
 end;
-
-class procedure TMessagingControl.PushbackIfNeeded;
-var
-  res : TWaitResult;
-begin
-  if FGlobalQueueDepth < TMessagingOptions.BlockedThreshold then
-    exit;
-
-  if MainThreadID = TThread.CurrentThread.ThreadID then
-    exit; // Never pushback from main thread, it could deadlock the app.
-
-  res := FUnblockedSignal.WaitFor(10 * 60 * 1000); // If queue has been jammed for 10 minutes, something has gone very wrong
-
-  if res = wrTimeout then
-  begin
-    FUnblockedSignal.SetEvent; //unblock anyway;
-  end;
-end;
-
 
 { TVSMessageWrapper<T> }
 
 constructor TVSMessageWrapper<T>.Create(const AMsgData: T);
 begin
   inherited Create;
-  Assert(SizeOf(AMsgData) > 12);
+  //the record must start with the message id
+  Assert(SizeOf(AMsgData) >= SizeOf(Word));
   FMsgData := AMsgData;
-  FThreadID := TThread.CurrentThread.ThreadID;
-end;
-
-destructor TVSMessageWrapper<T>.Destroy;
-begin
-  inherited;
+  FThreadID := CurrentThreadId;
 end;
 
 function TVSMessageWrapper<T>.GetMessageID: Word;
@@ -157,7 +159,5 @@ function TVSMessageWrapper<T>.MessagePtr: Pointer;
 begin
   result := @FMsgData;
 end;
-
-
 
 end.

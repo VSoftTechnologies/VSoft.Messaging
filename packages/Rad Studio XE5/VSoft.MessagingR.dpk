@@ -31,7 +31,8 @@ package VSoft.MessagingR;
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl;
+  rtl,
+  VSoft.CancellationTokenR;
 
 contains
   VSoft.Messaging.Channel in '..\..\src\VSoft.Messaging.Channel.pas',

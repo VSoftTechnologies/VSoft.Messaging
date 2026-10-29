@@ -153,6 +153,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="VSoft.CancellationTokenR.dcp"/>
         <DCCReference Include="..\..\src\VSoft.Messaging.Channel.pas"/>
         <DCCReference Include="..\..\src\VSoft.Messaging.Dispatchers.pas"/>
         <DCCReference Include="..\..\src\VSoft.Messaging.Internal.pas"/>
